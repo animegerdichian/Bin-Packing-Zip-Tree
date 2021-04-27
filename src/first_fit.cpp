@@ -42,12 +42,17 @@ void updateBins(node<int, std::pair<double, double>>* node, std::vector<double>&
     updateBins(node->right, free_space);
 }
 bool visitInorder(ZipTree<int, std::pair<double, double>>& tree, node<int, std::pair<double, double>>* node, double itemSize, int itemNum, std::vector<int>& assignment ){
+    std::cout << "EPSI: " << DBL_EPSILON << std::endl;
+    double item_size = std::ceil((itemSize) * 100.0) / 100.0;
+    std::cout << item_size << std::endl;
 
     if(node == nullptr){
         std::cout << "one" << std::endl;
         return false;
     }
-    else if((node->value.first - itemSize) < -0.10){ // when the root BRC < itemSize
+
+    /*
+    else if((std::ceil((node->value.first) * 100.0) / 100.0) < item_size){ // when the root BRC < itemSize
         std::cout << "itemSize = " << itemSize << std::endl;
         std::cout << "two: "  << node-> key<< std::endl;
        // IS THIS CORRECT?
@@ -60,23 +65,29 @@ bool visitInorder(ZipTree<int, std::pair<double, double>>& tree, node<int, std::
         // DO BRC CHECK
         return true;
     }
-    else if(node->left != nullptr && (std::abs(node->left->value.first - itemSize) < DBL_EPSILON || (node->left->value.first - itemSize) > DBL_EPSILON)){
+    */
+    else if(node->left != nullptr && (std::ceil((node->left->value.first) * 100.0) / 100.0) >= item_size){
         std::cout << "three: "  << node-> key<< std::endl;
         visitInorder(tree, node->left, itemSize, itemNum, assignment);
     }
-    else if(std::abs(node->value.second - itemSize) <= DBL_EPSILON || (node->value.second - itemSize) > DBL_EPSILON){
+    else if((std::ceil((node->value.second) * 100.0) / 100.0) >= item_size){
         std::cout << "three and a half: "  << node-> key<< std::endl;
         //node->value.second -= itemSize;
-        node->value.second = std::ceil((node->value.second - itemSize) * 100.0) / 100.0;
+        node->value.second = node->value.second - itemSize;
         assignment[itemNum] = node->key;
     }
-    else if(node->right != nullptr && (std::abs(node->right->value.first - itemSize) < DBL_EPSILON || (node->right->value.first - itemSize) > DBL_EPSILON)){
+    else if(node->right != nullptr && (std::ceil((node->right->value.first) * 100.0) / 100.0) >= item_size){
         std::cout << "four: "  << node-> key<< std::endl;
         visitInorder(tree, node->right, itemSize, itemNum, assignment);
     }
+    else{
+        std::pair<double, double> val = std::make_pair(1-itemSize,1-itemSize);
+        tree.insert(tree.getSize()+1,val);
+        assignment[itemNum] = tree.getSize();
+                // DO BRC CHECK
+        return true;
 
-
-
+    }
     // UPDATE BEST REMAINING CAPACITY?????? --> check node's own RC
     // CHECK THAT NODE HAS LEFT AND RIGHT
     double left = 0.0;
@@ -115,6 +126,9 @@ void first_fit(const std::vector<double>& items, std::vector<int>& assignment, s
         else{
             treeRoot = tree.getRoot();
             fix = visitInorder(tree, treeRoot, items[i], i, assignment);
+            std::cout << "PRINTING TREE ORGINAL: " << std::endl;
+                    tree.printTFF();
+                    std::cout << "PRINTING END ORIGINAL: " << std::endl;
             if(fix){
                 treeRoot = tree.getRoot();
                 fixBRC(treeRoot);

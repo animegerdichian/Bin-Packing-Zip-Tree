@@ -136,7 +136,7 @@ int main()
 	// first_fit
 	expected_result = {items, {1, 1, 2, 2, 3, 2, 4, 4}, {0.1, 0.0, 0.3, 0.0}};
 	testAlgorithm(test1, expected_result, first_fit, "first_fit");
-    /*
+
 	// first_fit_decreasing
 	expected_result = {items, {1, 2, 3, 4, 3, 2, 1, 4}, {0.0, 0.0, 0.0, 0.4}};
 	testAlgorithm(test1, expected_result, first_fit_decreasing, "first_fit_decreasing");
@@ -218,7 +218,7 @@ int main()
 	expected_result = {items, {1, 2, 1, 3, 2, 2, 4, 5, 6, 2, 6, 7, 3, 5, 3, 7, 4, 8, 9, 4}, {0, 0.01, 0, 0.08, 0.12, 0, 0.01, 0.37, 0.57}};
 	testAlgorithm(test4, expected_result, first_fit, "first_fit");
 
-
+/*
 	// first_fit_decreasing
 	expected_result = {items, {1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 4, 2, 3, 5, 1, 1, 3, 1, 3}, {0, 0.01, 0.01, 0, 0.14, 0, 0, 0}};
 	testAlgorithm(test4, expected_result, first_fit_decreasing, "first_fit_decreasing");
@@ -231,7 +231,7 @@ int main()
 	expected_result = {items, {1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 4, 2, 3, 5, 3, 5, 5, 1, 5}, {0.13, 0.01, 0.02, 0, 0, 0, 0, 0}};
 	testAlgorithm(test4, expected_result, best_fit_decreasing, "best_fit_decreasing");
 
-    */
+*/
 	return 0;
 }
 
