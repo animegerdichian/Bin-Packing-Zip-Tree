@@ -3,6 +3,7 @@
 
 #include <random>
 #include <iostream>
+#include <cmath>
 
 // nodes of the zip tree
 template <typename KeyType, typename ValType>
@@ -10,8 +11,8 @@ struct node{
         KeyType key;
         ValType value;
         unsigned rank;
-        node* left;
-        node* right;
+        node* left = nullptr;
+        node* right = nullptr;
         std::string x;
         node() : left(nullptr), right(nullptr) {};
     };
@@ -39,11 +40,9 @@ public:
 	void recDelete(node<KeyType,ValType>* n); // a helper method to recursively delete nodes used in destructor
     void printTree(node<KeyType,ValType>* n, int space);
     void printT();
-
-    void insertFF(const KeyType& key, std::pair<double,double> val, unsigned rank = getRandomRank());
     node<KeyType,ValType>* getRoot();
-    void printTreeFF(node<int,std::pair<double,double>>* n, int space);
-    void printTFF();
+    node<KeyType, ValType>* findNode(const KeyType& key);
+
 
 private:
 	// define private methods
@@ -56,6 +55,8 @@ private:
 
 
 };
+
+
 
 // fill in the definitions for each required member function and for any additional member functions you define
 
@@ -73,8 +74,10 @@ ZipTree<KeyType, ValType>::ZipTree()
 template <typename KeyType, typename ValType>
 ZipTree<KeyType, ValType>::~ZipTree()
 {
+    std::cout << "start del" << std::endl;
     // call helper method to delete root and its subtrees
     recDelete(root);
+    std::cout << "end del" <<std::endl;
 }
 
 template <typename KeyType, typename ValType>
@@ -91,158 +94,155 @@ unsigned ZipTree<KeyType, ValType>::getRandomRank()
 template <typename KeyType, typename ValType>
 void ZipTree<KeyType, ValType>::insert(const KeyType& key, const ValType& val, unsigned rank)
 {
-    size += 1;
+     size += 1;
 
-    node<KeyType,ValType>* cur = root;
-    node<KeyType,ValType>* prev = nullptr;
-    node<KeyType,ValType>* fix = nullptr;
-    node<KeyType,ValType>* newNode = new node<KeyType,ValType>;
-    newNode->key = key;
-    newNode->value = val;
-    newNode->rank = rank;
-    newNode->left = nullptr;
-    newNode->right = nullptr;
+            node<KeyType,ValType>* cur = root;
+            node<KeyType,ValType>* prev = nullptr;
+            node<KeyType,ValType>* fix = nullptr;
+            node<KeyType,ValType>* newNode = new node<KeyType,ValType>;
+            newNode->key = key;
+            newNode->value = val;
+            newNode->rank = rank;
+            newNode->left = nullptr;
+            newNode->right = nullptr;
 
-    while(cur != nullptr && (rank < cur->rank || (rank == cur->rank && key > cur->key))){
-        prev = cur;
-        if(key < cur->key){
-            cur = cur->left;
-        }
-        else{
-            cur = cur->right;
-        }
-    }
-    if(cur == root){
-        // one
-        root = newNode;
-        newNode->x = "one";
-    }
-    else if(key < prev->key){
-        // two
-        prev->left = newNode;
-        newNode->x = "two";
-    }
-    else{
-        // three
-        prev->right = newNode;
-        newNode->x = "three";
-
-    }
-
-    if(cur == nullptr){
-        // four --> LEAF : BRC = RC
-        newNode->left = nullptr;
-        newNode->right = nullptr;
-        newNode->x = "four";
-        return;
-    }
-
-    if(key < cur->key){
-        // five
-        newNode->right = cur;
-        newNode->x = "five";
-    }
-    else{
-        // six
-        newNode->left = cur;
-        newNode->x = "six";
-    }
-    // seven
-    prev = newNode;
-    newNode->x = "seven";
-
-    while(cur != nullptr){
-        fix = prev;
-        if(cur->key < key){
-            while(cur != nullptr && cur->key <= key){
+            while(cur != nullptr && (rank < cur->rank || (rank == cur->rank && key > cur->key))){
                 prev = cur;
-                cur = cur->right;
+                if(key < cur->key){
+                    cur = cur->left;
+                }
+                else{
+                    cur = cur->right;
+                }
             }
-        }
-        else{
-            while(cur != nullptr && cur->key >= key){
-                prev = cur;
-                cur = cur->left;
+            if(cur == root){
+                // one
+                root = newNode;
+                newNode->x = "one";
             }
-        }
-        if(fix->key > key || (fix == newNode && prev->key > key)){
-            // eight --> NOT LEAF - BRC is max(RC of subtrees)
-            fix->left = cur;
-            newNode->x = "eight";
-        }
-        else{
-            // nine --> NOT LEAF - BRC is max(RC of subtrees)
-            fix->right = cur;
-            newNode->x = "nine";
-        }
+            else if(key < prev->key){
+                // two
+                prev->left = newNode;
+                newNode->x = "two";
+            }
+            else{
+                // three
+                prev->right = newNode;
+                newNode->x = "three";
 
-    }
+            }
 
+            if(cur == nullptr){
+                // four --> LEAF : BRC = RC
+                newNode->left = nullptr;
+                newNode->right = nullptr;
+                newNode->x = "four";
+                return;
+            }
 
+            if(key < cur->key){
+                // five
+                newNode->right = cur;
+                newNode->x = "five";
+            }
+            else{
+                // six
+                newNode->left = cur;
+                newNode->x = "six";
+            }
+            // seven
+            prev = newNode;
+            newNode->x = "seven";
+
+            while(cur != nullptr){
+                fix = prev;
+                if(cur->key < key){
+                    while(cur != nullptr && cur->key <= key){
+                        prev = cur;
+                        cur = cur->right;
+                    }
+                }
+                else{
+                    while(cur != nullptr && cur->key >= key){
+                        prev = cur;
+                        cur = cur->left;
+                    }
+                }
+                if(fix->key > key || (fix == newNode && prev->key > key)){
+                    // eight --> NOT LEAF - BRC is max(RC of subtrees)
+                    fix->left = cur;
+                    newNode->x = "eight";
+                }
+                else{
+                    // nine --> NOT LEAF - BRC is max(RC of subtrees)
+                    fix->right = cur;
+                    newNode->x = "nine";
+                }
+
+            }
 }
 
 template <typename KeyType, typename ValType>
 void ZipTree<KeyType, ValType>::remove(const KeyType& key)
 {
+    node<KeyType,ValType>* cur = root;
+      	node<KeyType,ValType>* prev;
+      	node<KeyType,ValType>* left;
+      	node<KeyType,ValType>* right;
+      	while(key != cur->key){
+      	    prev = cur;
+      	    if(key < cur->key){
+      	        cur = cur->left;
+      	    }
+      	    else{
+      	        cur = cur->right;
+      	    }
+      	}
+      	left = cur->left;
+      	right = cur->right;
 
-	node<KeyType,ValType>* cur = root;
-	node<KeyType,ValType>* prev;
-	node<KeyType,ValType>* left;
-	node<KeyType,ValType>* right;
-	while(key != cur->key){
-	    prev = cur;
-	    if(key < cur->key){
-	        cur = cur->left;
-	    }
-	    else{
-	        cur = cur->right;
-	    }
-	}
-	left = cur->left;
-	right = cur->right;
+      	if(left == nullptr){
+      	    cur = right;
+      	}
+      	else if(right == nullptr){
+      	    cur = left;
+      	}
+      	else if(left->rank >= right->rank){
+      	    cur = left;
+      	}
+      	else{
+      	    cur = right;
+      	}
 
-	if(left == nullptr){
-	    cur = right;
-	}
-	else if(right == nullptr){
-	    cur = left;
-	}
-	else if(left->rank >= right->rank){
-	    cur = left;
-	}
-	else{
-	    cur = right;
-	}
+      	if(root->key == key){
+      	    root = cur;
+      	}
+      	else if(key < prev->key){
+      	    prev->left = cur;
+      	}
+      	else{
+      	    prev->right = cur;
+      	}
 
-	if(root->key == key){
-	    root = cur;
-	}
-	else if(key < prev->key){
-	    prev->left = cur;
-	}
-	else{
-	    prev->right = cur;
-	}
+      	while(left != nullptr && right != nullptr){
+      	    if(left->rank >= right->rank){
+      	        while(left != nullptr && left->rank >= right->rank){
+      	            prev = left;
+      	            left = left->right;
+      	        }
+      	        prev->right = right;
+      	    }
+      	    else{
+      	        while(right != nullptr && left->rank < right->rank){
+      	            prev = right;
+      	            right = right->left;
+      	        }
+      	        prev->left = left;
+      	    }
 
-	while(left != nullptr && right != nullptr){
-	    if(left->rank >= right->rank){
-	        while(left != nullptr && left->rank >= right->rank){
-	            prev = left;
-	            left = left->right;
-	        }
-	        prev->right = right;
-	    }
-	    else{
-	        while(right != nullptr && left->rank < right->rank){
-	            prev = right;
-	            right = right->left;
-	        }
-	        prev->left = left;
-	    }
+      	}
 
-	}
-
-	size--;
+      	size--;
 }
 
 template <typename KeyType, typename ValType>
@@ -264,6 +264,7 @@ ValType ZipTree<KeyType, ValType>::find(const KeyType& key)
 
 	return 0;
 }
+
 
 template <typename KeyType, typename ValType>
 unsigned ZipTree<KeyType, ValType>::getSize()
@@ -309,11 +310,15 @@ template <typename KeyType, typename ValType>
 void ZipTree<KeyType, ValType>::recDelete(node<KeyType,ValType>* n)
 {
     // recursively delete the left and right subtrees of node n
+
 	if(n){
 	    recDelete(n->left);
 	    recDelete(n->right);
+	    std::cout <<"delete: " << n->key << std::endl;
 	    delete n;
+	    std::cout << "COMPLETE" << std::endl;
 	}
+
 }
 
 template <typename KeyType, typename ValType>
@@ -326,141 +331,58 @@ void ZipTree<KeyType, ValType>::printTree(node<KeyType,ValType>* n, int space){
             for (int j = 0; j < space; ++j) {
                 std::cout << ' ';
             }
-            std::cout << "(" << n->key << ", rank = " << n->rank  << ") " << std::endl;
+            std::cout << "(" << n->key << ",  " << "bins: ";
+            for(int i=0;i < n->value.size(); i++){
+                std::cout << n->value[i] << " , ";
+            }
+            std::cout << std::endl;
             if (n->left){
                 printTree(n->left, space + 15);
             }
     }
 
 
+
+}
+
+template <typename KeyType, typename ValType>
+node<KeyType, ValType>* ZipTree<KeyType, ValType>::findNode(const KeyType& key)
+{
+    node<KeyType,ValType>* cur = root;
+    std::cout << "looking for: " << key << std::endl;
+    while(cur){
+        if(std::fabs(key - cur->key) < 1e-10){
+            return cur;
+        }
+        else if(key < cur->key){
+            cur = cur->left;
+        }
+        else if(key > cur->key){
+            cur = cur->right;
+        }
+
+        else{
+            return cur;
+        }
+
+    }
+
+	return nullptr;
 }
 
 template <typename KeyType, typename ValType>
 void ZipTree<KeyType, ValType>::printT(){
 
-    std::cout << "THE ROOT: " << root->key << std::endl;
+    std::cout << "THE ROOT: " << root->key  << std::endl;
     printTree(root,10);
+     std::cout << "PRINTING COMPLETE" << std::endl;
 }
 
-// methods for bin sorting algorithms
-template <typename KeyType, typename ValType>
-void ZipTree<KeyType, ValType>::insertFF(const KeyType& key, std::pair<double,double> val, unsigned rank){
-     size += 1;
 
-        node<KeyType,ValType>* cur = root;
-        node<KeyType,ValType>* prev = nullptr;
-        node<KeyType,ValType>* fix = nullptr;
-        node<KeyType,ValType>* newNode = new node<KeyType,ValType>;
-        newNode->key = key;
-        newNode->value = val;
-        newNode->rank = rank;
-        newNode->left = nullptr;
-        newNode->right = nullptr;
-
-        while(cur != nullptr && (rank < cur->rank || (rank == cur->rank && key > cur->key))){
-            prev = cur;
-            if(key < cur->key){
-                cur = cur->left;
-            }
-            else{
-                cur = cur->right;
-            }
-        }
-        if(cur == root){
-            // one
-            root = newNode;
-            newNode->x = "one";
-        }
-        else if(key < prev->key){
-            // two
-            prev->left = newNode;
-            newNode->x = "two";
-        }
-        else{
-            // three
-            prev->right = newNode;
-            newNode->x = "three";
-
-        }
-
-        if(cur == nullptr){
-            // four --> LEAF : BRC = RC
-            newNode->left = nullptr;
-            newNode->right = nullptr;
-            newNode->x = "four";
-            return;
-        }
-
-        if(key < cur->key){
-            // five
-            newNode->right = cur;
-            newNode->x = "five";
-        }
-        else{
-            // six
-            newNode->left = cur;
-            newNode->x = "six";
-        }
-        // seven
-        prev = newNode;
-        newNode->x = "seven";
-
-        while(cur != nullptr){
-            fix = prev;
-            if(cur->key < key){
-                while(cur != nullptr && cur->key <= key){
-                    prev = cur;
-                    cur = cur->right;
-                }
-            }
-            else{
-                while(cur != nullptr && cur->key >= key){
-                    prev = cur;
-                    cur = cur->left;
-                }
-            }
-            if(fix->key > key || (fix == newNode && prev->key > key)){
-                // eight --> NOT LEAF - BRC is max(RC of subtrees)
-                fix->left = cur;
-                newNode->x = "eight";
-            }
-            else{
-                // nine --> NOT LEAF - BRC is max(RC of subtrees)
-                fix->right = cur;
-                newNode->x = "nine";
-            }
-
-        }
-}
 template <typename KeyType, typename ValType>
 node<KeyType,ValType>* ZipTree<KeyType, ValType>::getRoot(){
     return root;
 }
 
-template <typename KeyType, typename ValType>
-void ZipTree<KeyType, ValType>::printTreeFF(node<int,std::pair<double,double>>* n, int space){
-
-    if (n != nullptr) {
-            if (n->right != nullptr){
-                printTreeFF(n->right, space + 15);
-            }
-            for (int j = 0; j < space; ++j) {
-                std::cout << ' ';
-            }
-            std::cout << "(" << n->key << ", rank = " << n->rank << "value= " << n->value.first << " , " << n->value.second << ") " << std::endl;
-            if (n->left){
-                printTreeFF(n->left, space + 15);
-            }
-    }
-
-
-}
-
-template <typename KeyType, typename ValType>
-void ZipTree<KeyType, ValType>::printTFF(){
-
-    std::cout << "THE ROOT: " << root->key << std::endl;
-    printTreeFF(root,10);
-}
 
 #endif
