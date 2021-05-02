@@ -64,7 +64,7 @@ private:
 template <typename KeyType, typename ValType>
 ZipTree<KeyType, ValType>::ZipTree()
 {
-    std::cout << "creating zip tree" << std::endl;
+
 	root = nullptr;
 	height = 0;
 	size = 0;
@@ -74,10 +74,10 @@ ZipTree<KeyType, ValType>::ZipTree()
 template <typename KeyType, typename ValType>
 ZipTree<KeyType, ValType>::~ZipTree()
 {
-    std::cout << "start del" << std::endl;
+
     // call helper method to delete root and its subtrees
     recDelete(root);
-    std::cout << "end del" <<std::endl;
+
 }
 
 template <typename KeyType, typename ValType>
@@ -314,16 +314,16 @@ void ZipTree<KeyType, ValType>::recDelete(node<KeyType,ValType>* n)
 	if(n){
 	    recDelete(n->left);
 	    recDelete(n->right);
-	    std::cout <<"delete: " << n->key << std::endl;
+
 	    delete n;
-	    std::cout << "COMPLETE" << std::endl;
+
 	}
 
 }
 
 template <typename KeyType, typename ValType>
 void ZipTree<KeyType, ValType>::printTree(node<KeyType,ValType>* n, int space){
-
+/*
     if (n != nullptr) {
             if (n->right != nullptr){
                 printTree(n->right, space + 15);
@@ -341,7 +341,7 @@ void ZipTree<KeyType, ValType>::printTree(node<KeyType,ValType>* n, int space){
             }
     }
 
-
+*/
 
 }
 
@@ -349,7 +349,7 @@ template <typename KeyType, typename ValType>
 node<KeyType, ValType>* ZipTree<KeyType, ValType>::findNode(const KeyType& key)
 {
     node<KeyType,ValType>* cur = root;
-    std::cout << "looking for: " << key << std::endl;
+
     while(cur){
         if(std::fabs(key - cur->key) < 1e-10){
             return cur;
@@ -373,9 +373,9 @@ node<KeyType, ValType>* ZipTree<KeyType, ValType>::findNode(const KeyType& key)
 template <typename KeyType, typename ValType>
 void ZipTree<KeyType, ValType>::printT(){
 
-    std::cout << "THE ROOT: " << root->key  << std::endl;
+
     printTree(root,10);
-     std::cout << "PRINTING COMPLETE" << std::endl;
+
 }
 
 

@@ -8,7 +8,7 @@
 #include <initializer_list>
 #include "ZipTree.h"
 
-/*
+
 // check that all BRC values are correct
 void fixBRC(node<int, std::pair<double, double>>* node){
     if (node == nullptr){
@@ -169,5 +169,5 @@ void first_fit_decreasing(const std::vector<double>& items, std::vector<int>& as
     return;
 }
 
-*/
+
 
