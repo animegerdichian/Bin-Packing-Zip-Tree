@@ -69,7 +69,7 @@ int main()
 	// ZipTree tests
 	// ------------------
 	std::cout << "testing ZipTree" << std::endl;
-/*
+
 	// define key/value pairs
 	ZipTree<int, char> tree;
 	std::vector<InsertType<int, char>> data = {{4, 'a', 0}, {5, 'b', 0}, {2, 'c', 2}, {1, 'd', 1}};
@@ -109,7 +109,7 @@ int main()
 
 	// add new tests
 
-*/
+
 	// ------------------
 	// bin packing tests
 	// ------------------
@@ -139,7 +139,7 @@ int main()
 
 	// first_fit_decreasing
 	expected_result = {items, {1, 2, 3, 4, 3, 2, 1, 4}, {0.0, 0.0, 0.0, 0.4}};
-	//testAlgorithm(test1, expected_result, first_fit_decreasing, "first_fit_decreasing");
+	testAlgorithm(test1, expected_result, first_fit_decreasing, "first_fit_decreasing");
 
 	// best_fit
 	expected_result = {items, {1, 1, 2, 2, 3, 2, 4, 4}, {0.1, 0.0, 0.3, 0.0}};
@@ -196,7 +196,7 @@ int main()
 
 	// first_fit_decreasing
 	expected_result = {items, {1, 2, 3, 3, 4, 1, 2}, {0, 0.33, 0.03, 0.58}};
-	//testAlgorithm(test3, expected_result, first_fit_decreasing, "first_fit_decreasing");
+	testAlgorithm(test3, expected_result, first_fit_decreasing, "first_fit_decreasing");
 
 	// best_fit
 	expected_result = {items, {1, 2, 2, 1, 3, 1, 4}, {0.12, 0, 0.46, 0.36}};
